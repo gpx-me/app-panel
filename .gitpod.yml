@@ -4,22 +4,25 @@ tasks:
   - init: |
       # Update package manager and install required packages
       sudo apt update
-      sudo apt install -y unzip wget
+      sudo apt install -y unzip wget openjdk-11-jdk
 
-      # Download Android Command Line Tools
-      wget https://dl.google.com/android/repository/commandlinetools-linux-6858069_latest.zip -O commandlinetools.zip
+      # Set up Android SDK directories
       mkdir -p $HOME/Android/Sdk/cmdline-tools
-      unzip commandlinetools.zip -d $HOME/Android/Sdk/cmdline-tools
+      export CMDLINE_TOOLS_VERSION=latest
+      wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O commandlinetools.zip
+      unzip commandlinetools.zip -d $HOME/Android/Sdk/cmdline-tools/
       rm commandlinetools.zip
+      mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/$CMDLINE_TOOLS_VERSION
 
       # Set up environment variables
       echo 'export ANDROID_HOME=$HOME/Android/Sdk' >> ~/.bashrc
       echo 'export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin' >> ~/.bashrc
       echo 'export PATH=$PATH:$ANDROID_HOME/platform-tools' >> ~/.bashrc
+      echo 'export PATH=$PATH:$ANDROID_HOME/tools/bin' >> ~/.bashrc
       source ~/.bashrc
 
-      # Install required Android build tools
-      sdkmanager "build-tools;34.0.0" "platforms;android-34" "platform-tools"
+      # Install required Android SDK components
+      yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "build-tools;34.0.0" "platforms;android-34"
 
       # Install Cordova
       npm install -g cordova
