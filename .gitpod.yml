@@ -1,3 +1,9 @@
+image: gitpod/workspace-full
+
 tasks:
-  - init: npm install -g expo-cli
-  - command: npm install
+  - init: |
+      sudo apt update && sudo apt install -y android-sdk
+      echo 'export ANDROID_HOME=/usr/lib/android-sdk' >> ~/.bashrc
+      echo 'export PATH=$PATH:$ANDROID_HOME/tools/bin' >> ~/.bashrc
+      echo 'export PATH=$PATH:$ANDROID_HOME/platform-tools' >> ~/.bashrc
+      source ~/.bashrc
