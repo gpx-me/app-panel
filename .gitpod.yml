@@ -42,18 +42,23 @@ tasks:
       fi
 
       # Update compileSdkVersion and targetSdkVersion in build.gradle
-      sed -i 's/compileSdkVersion [0-9]*/compileSdkVersion 34/' platforms/android/app/build.gradle
-      sed -i 's/targetSdkVersion [0-9]*/targetSdkVersion 34/' platforms/android/app/build.gradle
+      if [ -f "platforms/android/app/build.gradle" ]; then
+        sed -i 's/compileSdkVersion [0-9]*/compileSdkVersion 34/' platforms/android/app/build.gradle
+        sed -i 's/targetSdkVersion [0-9]*/targetSdkVersion 34/' platforms/android/app/build.gradle
+      else
+        echo "build.gradle not found!"
+      fi
 
       # Configure config.xml to point to your Pterodactyl domain
-      echo '<widget id="com.example.webApp" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">' > config.xml
-      echo '  <name>Web App</name>' >> config.xml
-      echo '  <content src="https://dash.ptero-maker.my.id/" />' >> config.xml
-      echo '  <allow-navigation href="*" />' >> config.xml
-      echo '  <access origin="*" />' >> config.xml
-      echo '</widget>' >> config.xml
+      echo '<widget id="com.example.webApp" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">' > webApp/config.xml
+      echo '  <name>Web App</name>' >> webApp/config.xml
+      echo '  <content src="https://dash.ptero-maker.my.id/" />' >> webApp/config.xml
+      echo '  <allow-navigation href="*" />' >> webApp/config.xml
+      echo '  <access origin="*" />' >> webApp/config.xml
+      echo '</widget>' >> webApp/config.xml
 
       # Build Cordova Android project
+      cd webApp
       cordova build android
 
   - command: |
