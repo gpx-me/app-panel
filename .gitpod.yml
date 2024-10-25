@@ -30,11 +30,11 @@ tasks:
       npm install -g cordova
       
       # Create Cordova project if it doesn't exist
-      if [ ! -d "webApp" ]; then
-        cordova create webApp com.example.webApp "Web App"
+      if [ ! -d "$HOME/webApp" ]; then
+        cordova create $HOME/webApp com.example.webApp "Web App"
       fi
 
-      cd webApp
+      cd $HOME/webApp
 
       # Add Android platform if not added
       if [ ! -d "platforms/android" ]; then
@@ -50,17 +50,16 @@ tasks:
       fi
 
       # Configure config.xml to point to your Pterodactyl domain
-      echo '<widget id="com.example.webApp" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">' > webApp/config.xml
-      echo '  <name>Web App</name>' >> webApp/config.xml
-      echo '  <content src="https://dash.ptero-maker.my.id/" />' >> webApp/config.xml
-      echo '  <allow-navigation href="*" />' >> webApp/config.xml
-      echo '  <access origin="*" />' >> webApp/config.xml
-      echo '</widget>' >> webApp/config.xml
+      echo '<widget id="com.example.webApp" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">' > $HOME/webApp/config.xml
+      echo '  <name>Web App</name>' >> $HOME/webApp/config.xml
+      echo '  <content src="https://dash.ptero-maker.my.id/" />' >> $HOME/webApp/config.xml
+      echo '  <allow-navigation href="*" />' >> $HOME/webApp/config.xml
+      echo '  <access origin="*" />' >> $HOME/webApp/config.xml
+      echo '</widget>' >> $HOME/webApp/config.xml
 
       # Build Cordova Android project
-      cd webApp
-      cordova build android
+      cordova build android --project-dir=$HOME/webApp
 
   - command: |
-      cd webApp
+      cd $HOME/webApp
       cordova emulate android
