@@ -2,28 +2,34 @@ image: gitpod/workspace-full
 
 tasks:
   - init: |
-      # Update package manager and install required packages
-      sudo apt update
-      sudo apt install -y unzip wget openjdk-17-jdk
+      # Install Ionic CLI
+      npm install -g @ionic/cli
 
-      # Set up Android SDK directories
-      mkdir -p $HOME/Android/Sdk/cmdline-tools
-      export CMDLINE_TOOLS_VERSION=latest
-      wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O commandlinetools.zip
-      unzip commandlinetools.zip -d $HOME/Android/Sdk/cmdline-tools/
-      rm commandlinetools.zip
-      mv $HOME/Android/Sdk/cmdline-tools/cmdline-tools $HOME/Android/Sdk/cmdline-tools/$CMDLINE_TOOLS_VERSION
+      # Create a new Ionic project
+      ionic start myApp blank --no-deps
 
-      # Set up environment variables
-      echo 'export ANDROID_HOME=$HOME/Android/Sdk' >> ~/.bashrc
-      echo 'export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64' >> ~/.bashrc
-      echo 'export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin' >> ~/.bashrc
-      echo 'export PATH=$PATH:$ANDROID_HOME/platform-tools' >> ~/.bashrc
-      echo 'export PATH=$PATH:$ANDROID_HOME/tools/bin' >> ~/.bashrc
-      source ~/.bashrc
+      # Navigate to the project directory
+      cd myApp
 
-      # Install required Android SDK components
-      yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "build-tools;34.0.0" "platforms;android-34"
+      # Install dependencies
+      npm install
 
-      # Install Cordova
-      npm install -g cordova
+      # Allow navigation to your domain
+      echo "<allow-navigation href='https://dash.ptero-maker.my.id/*' />" >> config.xml
+      echo "<allow-intent href='https://dash.ptero-maker.my.id/*' />" >> config.xml
+
+      # Add CORS support to your API if needed
+      # You may need to configure your backend to handle CORS properly.
+
+      # Install the Cordova plugin for CORS (if required)
+      # Uncomment the following line if you need to use Insecure HTTP (not recommended for production)
+      # ionic cordova plugin add cordova-plugin-whitelist
+
+  - command: |
+      # Run the Ionic app
+      cd myApp
+      ionic serve --host=0.0.0.0 --port=3000
+
+ports:
+  - port: 3000
+    onOpen: open-preview
