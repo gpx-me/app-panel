@@ -1,3 +1,4 @@
+# File: .gitpod.yml
 image: gitpod/workspace-full
 
 tasks:
@@ -6,7 +7,7 @@ tasks:
       sudo apt update
       sudo apt install -y unzip wget openjdk-17-jdk
 
-      # Set up Android SDK directories
+      # Set up Android SDK directories and install command-line tools
       mkdir -p $HOME/Android/Sdk/cmdline-tools
       export CMDLINE_TOOLS_VERSION=latest
       wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O commandlinetools.zip
@@ -25,5 +26,36 @@ tasks:
       # Install required Android SDK components
       yes | sdkmanager --sdk_root=$ANDROID_HOME "platform-tools" "build-tools;34.0.0" "platforms;android-34"
 
-      # Install Cordova
+      # Install Cordova globally
       npm install -g cordova
+      
+      # Create Cordova project if it doesn't exist
+      if [ ! -d "webApp" ]; then
+        cordova create webApp com.example.webApp "Web App"
+      fi
+
+      cd webApp
+
+      # Add Android platform if not added
+      if [ ! -d "platforms/android" ]; then
+        cordova platform add android
+      fi
+
+      # Update compileSdkVersion and targetSdkVersion in build.gradle
+      sed -i 's/compileSdkVersion [0-9]*/compileSdkVersion 34/' platforms/android/app/build.gradle
+      sed -i 's/targetSdkVersion [0-9]*/targetSdkVersion 34/' platforms/android/app/build.gradle
+
+      # Configure config.xml to point to your Pterodactyl domain
+      echo '<widget id="com.example.webApp" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">' > config.xml
+      echo '  <name>Web App</name>' >> config.xml
+      echo '  <content src="https://dash.ptero-maker.my.id/" />' >> config.xml
+      echo '  <allow-navigation href="*" />' >> config.xml
+      echo '  <access origin="*" />' >> config.xml
+      echo '</widget>' >> config.xml
+
+      # Build Cordova Android project
+      cordova build android
+
+  - command: |
+      cd webApp
+      cordova emulate android
